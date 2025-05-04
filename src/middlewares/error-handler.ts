@@ -24,7 +24,6 @@ export const errorHandler = async (err, req, res, next) =>{
         type: "error",
         message: err.message,
         user_id: req.jwtPayload.user_id,
-        tenant_id: req.jwtPayload.tenant_id,
         username: req.jwtPayload.username,
         request:{
             params: req.params,

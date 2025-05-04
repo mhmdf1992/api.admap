@@ -7,6 +7,7 @@ import { types } from '../../ioc-types';
 import { ArgumentError } from '../../errors/argument';
 import { validate } from './validate';
 import { IRegister } from '../../dtos/auth/register';
+import { UserRole } from '../../data/models/user';
 export const  authRoutes = express.Router();
 
 authRoutes.post(
@@ -46,7 +47,14 @@ authRoutes.post(
         if(await service.usernameExists(user.username))
             throw new ArgumentError("username", "Username already exists.");
         UserService.validatePassword(user.password);
-        await service.create(user);
+        await service.create({
+            firstname: user.firstname,
+            lastname: user.lastname,
+            password: user.password,
+            role: UserRole.USER,
+            username: user.username,
+            disabled: false
+        });
         const response = await service.authenticate(user.username, user.password);
         res.body(response);
         res.activity({ 
