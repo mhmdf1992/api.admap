@@ -19,9 +19,9 @@ export interface IUserService{
     exists(id: string): Promise<boolean>;
     get(id: string): Promise<IUser>;
     getMany(filter: IFilter): Promise<IPagedList<IUser>>;
-    delete(id: string): Promise<void>;
-    update(id: string, user: IUpdateUser): Promise<void>;
-    replace(id: string, user: IUpdateUser): Promise<void>;
+    delete(id: string): Promise<IUser>;
+    update(id: string, user: IUpdateUser): Promise<IUser>;
+    replace(id: string, user: IUpdateUser): Promise<IUser>;
     create(user: {username: string, password: string, firstname: string, lastname: string, role: UserRole, disabled?: boolean}): Promise<ObjectId>;
 }
 
@@ -126,7 +126,7 @@ export class UserService implements IUserService{
         return pagedList;
     }
 
-    public delete = async (id: string): Promise<void> => {
+    public delete = async (id: string): Promise<IUser> => {
         if(!ObjectId.isValid(id))
             throw new ArgumentError("id", "id is not valid");
         const user = 
@@ -134,10 +134,11 @@ export class UserService implements IUserService{
             _mongoClient
                 .db()
                 .collection<IUser>("users")
-                .findOneAndDelete({ _id: ObjectId.createFromHexString(id) }, { projection: { "username": 1 } });
+                .findOneAndDelete({ _id: ObjectId.createFromHexString(id) });
+        return user;
     }
 
-    public update = async (id: string, user: IUpdateUser): Promise<void> => {
+    public update = async (id: string, user: IUpdateUser): Promise<IUser> => {
         if(!ObjectId.isValid(id))
             throw new ArgumentError("id", "id is not valid");
         const set: any = {};
@@ -152,14 +153,15 @@ export class UserService implements IUserService{
         if(user.disabled === false || user.disabled === true)
             set.disabled = user.disabled;
         set.updated_on = new Date();
-        await this.
+        const result = await this.
          _mongoClient
             .db()
-            .collection("users")
-            .updateOne({ _id: ObjectId.createFromHexString(id) }, {$set: set});
+            .collection<IUser>("users")
+            .findOneAndUpdate({ _id: ObjectId.createFromHexString(id) }, {$set: set});
+        return result;
     }
 
-    public replace = async (id: string, user: IUpdateUser): Promise<void> => {
+    public replace = async (id: string, user: IUpdateUser): Promise<IUser> => {
         if(!ObjectId.isValid(id))
             throw new ArgumentError("id", "id is not valid");
         const oldUser =
@@ -182,11 +184,12 @@ export class UserService implements IUserService{
             disabled: user.disabled,
             updated_on: new Date()
         };
-        await this.
+        const result = await this.
          _mongoClient
             .db()
             .collection<IUser>("users")
-            .replaceOne({ _id: ObjectId.createFromHexString(id) }, newUser);
+            .findOneAndReplace({ _id: ObjectId.createFromHexString(id) }, newUser);
+        return result;
     }
 
     public create = async (user: {username: string, password: string, firstname: string, lastname: string, role: UserRole, disabled?: boolean}): Promise<ObjectId> => {

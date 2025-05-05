@@ -37,9 +37,8 @@ userRoutes.post(
         }
         res.body(response)
         res.activity({
-            entity: "user",
-            action: "created",
-            value: id
+            message: `created user ${user.username}`,
+            reference: id
         });
     }catch(err){
         return next(err);
@@ -85,12 +84,10 @@ userRoutes.delete('/:id', async (req, res, next) => {
         const service = container.get<IUserService>(types.UserService);
         if(!await service.exists(req.params.id))
             throw new NotFound("User does not exists.");
-        const user = await service.get(req.params.id);
-        await service.delete(req.params.id);
+        const user = await service.delete(req.params.id);
         res.body();
         res.activity({ 
-            message: `deleted user ${user.firstname} ${user.lastname}`,
-            reference: req.params.id
+            message: `deleted user ${user.username}`
         });
     }catch(err){
         return next(err);
@@ -112,10 +109,10 @@ userRoutes.put(
     try{
         if(!await service.exists(req.params.id))
             throw new NotFound("User does not exists.");
-        await service.replace(req.params.id, user);
+        const updatedUser = await service.replace(req.params.id, user);
         res.body();
         res.activity({ 
-            message: `updated user ${user.firstname} ${user.lastname}`,
+            message: `updated user ${updatedUser.username}`,
             reference: req.params.id
         });
     }catch(err){
@@ -139,10 +136,10 @@ userRoutes.patch(
     try{
         if(!await service.exists(req.params.id))
             throw new NotFound("User does not exists.");
-        await service.update(req.params.id, user);
+        const updatedUser = await service.update(req.params.id, user);
         res.body();
         res.activity({ 
-            message: `updated user ${user.firstname} ${user.lastname}`,
+            message: `updated user ${updatedUser.username}`,
             reference: req.params.id
         });
     }catch(err){
