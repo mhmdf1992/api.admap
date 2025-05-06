@@ -15,8 +15,10 @@ adRoutes.post(
  validate([
     body('title').notEmpty(),
     body('description').notEmpty(),
-    body('location').notEmpty(),
+    body('country').notEmpty(),
+    body('city').notEmpty(),
     body('price').isFloat({min: 1}),
+    body('currency').notEmpty(),
     body('category').notEmpty(),
     body('subcategory').notEmpty()
  ]), 
@@ -40,14 +42,14 @@ adRoutes.post(
 
 adRoutes.get('/', async (req, res, next) => {
     const filter: IFilter = {
-        page: parseInt(req.body.page as string, 10) || 1,
-        page_size: parseInt(req.body.page_size as string, 10) || 12,
-        equal: req.body.equal,
-        regex: req.body.regex,
-        between: req.body.between,
-        sort: req.body.sort ?? {
-            "field": "created_on",
-            "order": "descending"
+        page: parseInt(req.headers['page'] as string, 10) || 1,
+        page_size: parseInt(req.headers['page_size'] as string, 10) || 12,
+        equal: req.headers['equal'],
+        regex: req.headers['regex'],
+        between: req.headers['between'],
+        sort:{
+            "field": req.headers['sort.field'] ?? "created_on",
+            "order": req.headers['sort.order'] ?? "descending"
         }
     }
     const service = container.get<IAdService>(types.AdService);
