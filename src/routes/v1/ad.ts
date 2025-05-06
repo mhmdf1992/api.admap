@@ -77,8 +77,7 @@ adRoutes.delete('/:id', async (req, res, next) => {
         const service = container.get<IAdService>(types.AdService);
         if(!await service.exists(req.params.id))
             throw new NotFound("Ad does not exists.");
-        const ad = await service.get(req.params.id);
-        await service.delete(req.params.id);
+        const ad = await service.delete(req.params.id);
         res.body();
         res.activity({ 
             message: `deleted ad ${ad.title}`
