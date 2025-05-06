@@ -8,7 +8,7 @@ import { IPagedList } from "../dtos/paged-list";
 import { AggregateBuilder } from "../data/helpers/aggregate-builder";
 
 export interface IAdService{
-    create(ad: ICreateAd): Promise<ObjectId>;
+    create(ad: ICreateAd, userId: string): Promise<ObjectId>;
     exists(id: string): Promise<boolean>;
     get(id: string): Promise<IAd>;
     getMany(filter: IFilter): Promise<IPagedList<IAd>>;
@@ -22,7 +22,7 @@ export class AdService implements IAdService{
         this._mongoClient = mongoClient;
     }
     
-    public create = async (ad: ICreateAd): Promise<ObjectId> => {
+    public create = async (ad: ICreateAd, userId: string): Promise<ObjectId> => {
         const newAd: IAd = {
             _id: null,
             title: ad.title,
@@ -35,7 +35,8 @@ export class AdService implements IAdService{
             subcategory: ad.subcategory,
             status: AdStatus.Pending,
             created_on: new Date(),
-            disabled: false
+            disabled: false,
+            user_id: userId
         }
         await this.
          _mongoClient

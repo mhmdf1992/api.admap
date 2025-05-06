@@ -26,7 +26,7 @@ adRoutes.post(
     const ad = req.body as ICreateAd;
     try{
         const service = container.get<IAdService>(types.AdService);
-        const id = await service.create(ad);
+        const id = await service.create(ad, req.jwtPayload.user_id);
         const response: ICreateAdResponse = {
             _id: id.toHexString()
         }

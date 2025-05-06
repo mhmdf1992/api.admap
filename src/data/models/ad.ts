@@ -15,6 +15,7 @@ export interface IAd{
     created_on: Date;
     updated_on?: Date;
     disabled: boolean;
+    user_id: string;
 }
 export enum AdStatus{
     Pending = 0,
