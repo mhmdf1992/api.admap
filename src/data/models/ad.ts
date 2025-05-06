@@ -4,8 +4,10 @@ export interface IAd{
     _id: ObjectId;
     title: string;
     description: string;
-    location: string;
+    country: string;
+    city: string;
     price: number;
+    currency: string;
     category: string;
     subcategory: string;
     status: AdStatus;
