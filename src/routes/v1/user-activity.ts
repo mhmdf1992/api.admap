@@ -9,12 +9,12 @@ userActivityRoutes.get('/', async (req, res, next) => {
     const filter: IFilter = {
         page: parseInt(req.headers['page'] as string, 10) || 1,
         page_size: parseInt(req.headers['page_size'] as string, 10) || 12,
-        equal: req.headers['equal'],
-        regex: req.headers['regex'],
-        between: req.headers['between'],
-        sort:{
-            "field": req.headers['sort.field'] ?? "created_on",
-            "order": req.headers['sort.order'] ?? "descending"
+        equal: JSON.parse(req.headers['equal'] ?? null) ?? [],
+        regex: JSON.parse(req.headers['regex'] ?? null) ?? [],
+        between: JSON.parse(req.headers['between'] ?? null) ?? [],
+        sort: JSON.parse(req.headers['sort'] ?? null) ?? {
+            field: "created_on",
+            order: "descending"
         }
     }
     const service = container.get<IUserActivityService>(types.UserActivityService);

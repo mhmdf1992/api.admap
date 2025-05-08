@@ -18,7 +18,7 @@ export interface IAd{
     user_id: string;
 }
 export enum AdStatus{
-    Pending = 0,
-    Approved = 1,
-    Regected = 2
+    Pending = 1,
+    Approved = 2,
+    Rejected = 3
 }

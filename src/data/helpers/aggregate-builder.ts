@@ -6,8 +6,9 @@ export class AggregateBuilder{
         const match: any = {};
         if(filter.equal && filter.equal.length > 0){
             filter.equal.forEach(equal =>{
-                if(equal.field && equal.value)
+                if(equal.field && equal.value){
                     match[equal.field] = equal.value;
+                }
             })
         } 
         if(filter.between && filter.between.length > 0){

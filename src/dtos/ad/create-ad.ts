@@ -1,3 +1,5 @@
+import { AdStatus } from "../../data/models/ad";
+
 export interface ICreateAd{
     title: string;
     description: string;
@@ -7,4 +9,6 @@ export interface ICreateAd{
     currency: string;
     category: string;
     subcategory: string;
+    parent_ad?: string;
+    status: AdStatus;
 }
